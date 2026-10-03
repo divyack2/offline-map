@@ -19,7 +19,13 @@
   },
   "homepage": "https://github.com/divyack2/offline-map#readme",
   "dependencies": {
+    "@protomaps/basemaps": "^5.7.2",
     "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "maplibre-gl": "^6.11.2",
+    "pmtiles": "^4.5.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.2"
   }
 }
