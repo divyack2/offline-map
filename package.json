@@ -1,0 +1,25 @@
+{
+  "name": "offline-map",
+  "version": "1.0.0",
+  "description": "fun maps that can be viewed offline!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/divyack2/offline-map.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/divyack2/offline-map/issues"
+  },
+  "homepage": "https://github.com/divyack2/offline-map#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
+}
