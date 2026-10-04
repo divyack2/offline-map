@@ -39,6 +39,22 @@ const dialogEl = document.getElementById('confirm');
 const estimateEl = document.getElementById('estimate');
 const confirmEl = document.getElementById('confirm-download');
 const closeEl = document.getElementById('confirm-close');
+const progressEl = document.getElementById('progress');
+
+// Start the fetcher in a background thread and show what it reports.
+const fetcher = new Worker(new URL('./fetcher.js', import.meta.url), { type: 'module' });
+fetcher.onmessage = (event) => {
+  const { status, done, total, message } = event.data;
+  if (status === 'downloading') progressEl.textContent = `Downloading: ${done} of ${total} chunks`;
+  if (status === 'complete') progressEl.textContent = `Downloaded: ${total} chunks saved.`;
+  if (status === 'failed') progressEl.textContent = `Download failed. ${message}`;
+  if (status === 'stopped') progressEl.textContent = `Download stopped at ${done} of ${total}. ${message}`;
+};
+fetcher.onerror = (event) => {
+  progressEl.textContent = `The downloader failed to start. ${event.message ?? ''}`;
+  console.error(event);
+};
+
 let currentPlan = null;
 let latestRequest = 0;
 
@@ -106,6 +122,6 @@ closeEl.addEventListener('click', () => dialogEl.close());
 
 confirmEl.addEventListener('click', async () => {
   const regionId = await saveRegion(currentPlan);
-  console.log('Saved region', regionId);
+  fetcher.postMessage({ type: 'start', regionId });
   dialogEl.close();
 });

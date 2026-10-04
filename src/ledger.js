@@ -44,3 +44,27 @@ export async function chunksForRegion(regionId) {
   const db = await openLedger();
   return db.getAll('chunks', IDBKeyRange.bound([regionId, 0], [regionId, Infinity]));
 }
+
+export async function getRegion(regionId) {
+  const db = await openLedger();
+  return db.get('regions', regionId);
+}
+
+// Flips one chunk from 'pending' to 'done'.
+export async function markChunkDone(regionId, index) {
+  const db = await openLedger();
+  const tx = db.transaction('chunks', 'readwrite');
+  const chunk = await tx.store.get([regionId, index]);
+  chunk.status = 'done';
+  await Promise.all([tx.store.put(chunk), tx.done]);
+}
+
+// Sets a region's status: 'downloading', 'complete' or 'failed'.
+export async function setRegionStatus(regionId, status, reason = null) {
+  const db = await openLedger();
+  const tx = db.transaction('regions', 'readwrite');
+  const region = await tx.store.get(regionId);
+  region.status = status;
+  region.reason = reason;
+  await Promise.all([tx.store.put(region), tx.done]);
+}
