@@ -1,4 +1,4 @@
-import { planRegion } from '../planner.js';
+import { planRegion } from '../src/planner.js';
 
 const manhattan = [-74.03, 40.70, -73.91, 40.88];
 const plan = await planRegion('http://localhost:9000/nyc.pmtiles', manhattan);

@@ -1,5 +1,5 @@
 // sample test for now to make sure that tilesForBbox() works as expected
-import { tilesForBbox } from '../planner.js';
+import { tilesForBbox } from '../src/planner.js';
 
 const regions = {
   'East Village':  [-73.992, 40.721, -73.972, 40.735],

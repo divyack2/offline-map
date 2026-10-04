@@ -1,4 +1,4 @@
-import { tilesForBbox, openArchive, lookupTiles, planChunks } from '../planner.js';
+import { tilesForBbox, openArchive, lookupTiles, planChunks } from '../src/planner.js';
 
 const archive = openArchive('http://localhost:9000/nyc.pmtiles');
 const header = await archive.getHeader();
@@ -11,7 +11,7 @@ const regions = {
 
 for (const [name, bbox] of Object.entries(regions)) {
   const wanted = tilesForBbox(bbox, header.minZoom, header.maxZoom);
-  const found = await lookupTiles(archive, wanted);
+  const found = await lookupTiles(archive, header, wanted);
   const chunks = planChunks(found);
   const bytes = chunks.reduce((sum, c) => sum + c.length, 0);
   const biggest = Math.max(...chunks.map((c) => c.length));
