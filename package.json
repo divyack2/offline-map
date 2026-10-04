@@ -22,6 +22,7 @@
     "@protomaps/basemaps": "^5.7.2",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "idb": "^8.0.3",
     "maplibre-gl": "^6.11.2",
     "pmtiles": "^4.5.0"
   },

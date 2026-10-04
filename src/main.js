@@ -3,6 +3,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 import { layers, namedFlavor } from '@protomaps/basemaps';
 import { planRegion, countRegionTiles, MAX_PLAN_TILES } from './planner.js';
+import { saveRegion } from './ledger.js';
 
 // Any URL starting with pmtiles:// is now handled by the PMTiles library.
 const protocol = new Protocol();
@@ -103,7 +104,8 @@ downloadEl.addEventListener('click', async () => {
 
 closeEl.addEventListener('click', () => dialogEl.close());
 
-confirmEl.addEventListener('click', () => {
-  console.log('Plan ready for milestone 3:', currentPlan);
+confirmEl.addEventListener('click', async () => {
+  const regionId = await saveRegion(currentPlan);
+  console.log('Saved region', regionId);
   dialogEl.close();
 });
