@@ -1,4 +1,4 @@
-import { tilesForBbox, openArchive, lookupTiles, planChunks } from './planner.js';
+import { tilesForBbox, openArchive, lookupTiles, planChunks } from '../planner.js';
 
 const archive = openArchive('http://localhost:9000/nyc.pmtiles');
 const header = await archive.getHeader();

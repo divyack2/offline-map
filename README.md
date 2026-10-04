@@ -13,7 +13,7 @@ fun maps that can be viewed offline!
 
 Step 3 means we don't need one HTTP request per tile. Tiles that are next to each other in the archive come down together in a single range request.
 
-Output of `node check-chunks.js`:
+Output of `node testing/check-chunks.js`:
 
 | Region        | Tiles | Chunks | Requests saved |
 |---------------|------:|-------:|---------------:|

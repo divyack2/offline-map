@@ -5,10 +5,27 @@
     <title>offmap</title>
     <style>
       html, body, #map { margin: 0; height: 100%; }
+      #panel {
+        position: absolute; top: 10px; left: 10px; z-index: 1;
+        background: white; padding: 10px 12px; border-radius: 6px;
+        font: 14px system-ui, sans-serif; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      }
+      #download { margin-top: 8px; }
+      #confirm { font: 14px system-ui, sans-serif; border: none; border-radius: 6px; max-width: 320px; }
+      #confirm button { margin-right: 6px; }
     </style>
   </head>
   <body>
     <div id="map"></div>
+    <div id="panel">
+      <div id="status">Checking…</div>
+      <button id="download" hidden>Download this area</button>
+    </div>
+    <dialog id="confirm">
+      <p id="estimate"></p>
+      <button id="confirm-download" hidden>Download</button>
+      <button id="confirm-close">Cancel</button>
+    </dialog>
     <script type="module" src="/main.js"></script>
   </body>
 </html>

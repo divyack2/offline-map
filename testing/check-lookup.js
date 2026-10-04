@@ -1,6 +1,6 @@
 // sample test for now to make sure lookupTiles() is working as expected
 
-import { tilesForBbox, openArchive, lookupTiles } from './planner.js';
+import { tilesForBbox, openArchive, lookupTiles } from '../planner.js';
 
 const archive = openArchive('http://localhost:9000/nyc.pmtiles');
 const header = await archive.getHeader();
