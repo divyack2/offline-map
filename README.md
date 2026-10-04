@@ -9,7 +9,7 @@ fun maps that can be viewed offline!
 2. **Tile coordinates → byte locations** (`lookupTiles`). Looks up each tile in the archive's directory, following leaf directories where needed. Each tile the archive actually contains comes back with its `offset` and `length` in the file. Tiles it doesn't have are skipped.
 3. **Byte locations → chunks** (`planChunks`). Sorts the tiles by offset and merges tiles that sit back to back in the file into chunks of at most 1 MB. Each chunk is one HTTP range request.
 
-## Chunked tile requests
+### Chunked tile requests
 
 Step 3 means we don't need one HTTP request per tile. Tiles that are next to each other in the archive come down together in a single range request.
 

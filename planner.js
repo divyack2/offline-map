@@ -102,3 +102,31 @@ export function planChunks(found, maxChunkBytes = ONE_MB) {
   }
   return chunks;
 }
+
+// Asks the server for the file's version fingerprint.
+async function fetchEtag(url) {
+  const response = await fetch(url, { headers: { Range: 'bytes=0-0' } });
+  if (!response.ok) throw new Error(`Could not reach ${url}: ${response.status}`);
+  const etag = response.headers.get('ETag');
+  if (!etag) throw new Error('Server sent no ETag, so the plan cannot be pinned');
+  return etag;
+}
+
+// The whole planner in one call: bounding box in, plan out.
+export async function planRegion(url, bbox, maxChunkBytes = ONE_MB) {
+  const archive = openArchive(url);
+  const [header, etag] = await Promise.all([archive.getHeader(), fetchEtag(url)]);
+  const wanted = tilesForBbox(bbox, header.minZoom, header.maxZoom);
+  const found = await lookupTiles(archive, wanted);
+  const chunks = planChunks(found, maxChunkBytes);
+  return {
+    url,
+    etag,
+    bbox,
+    minZoom: header.minZoom,
+    maxZoom: header.maxZoom,
+    tileCount: found.length,
+    totalBytes: chunks.reduce((sum, c) => sum + c.length, 0),
+    chunks,
+  };
+}
