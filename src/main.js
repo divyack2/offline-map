@@ -49,6 +49,8 @@ fetcher.onmessage = (event) => {
   if (status === 'complete') progressEl.textContent = `Downloaded: ${total} chunks saved.`;
   if (status === 'failed') progressEl.textContent = `Download failed. ${message}`;
   if (status === 'stopped') progressEl.textContent = `Download stopped at ${done} of ${total}. ${message}`;
+  if (status === 'retrying') progressEl.textContent = `Connection problem at ${done} of ${total} chunks. Retrying…`;
+  if (status === 'waiting') progressEl.textContent = `Offline at ${done} of ${total} chunks. Waiting for a connection…`;
 };
 fetcher.onerror = (event) => {
   progressEl.textContent = `The downloader failed to start. ${event.message ?? ''}`;
