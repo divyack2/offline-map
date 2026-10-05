@@ -3,7 +3,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 import { layers, namedFlavor } from '@protomaps/basemaps';
 import { planRegion, countRegionTiles, MAX_PLAN_TILES } from './planner.js';
-import { saveRegion } from './ledger.js';
+import { saveRegion, listRegions } from './ledger.js';
 
 // Any URL starting with pmtiles:// is now handled by the PMTiles library.
 const protocol = new Protocol();
@@ -56,6 +56,16 @@ fetcher.onerror = (event) => {
   progressEl.textContent = `The downloader failed to start. ${event.message ?? ''}`;
   console.error(event);
 };
+
+// Restart every region the ledger says is unfinished.
+async function resumeDownloads() {
+  const regions = await listRegions();
+  for (const region of regions) {
+    if (region.status === 'downloading') fetcher.postMessage({ type: 'start', regionId: region.id });
+  }
+}
+resumeDownloads();
+window.addEventListener('online', resumeDownloads);
 
 let currentPlan = null;
 let latestRequest = 0;
