@@ -4,6 +4,7 @@ import { Protocol } from 'pmtiles';
 import { layers, namedFlavor } from '@protomaps/basemaps';
 import { planRegion, countRegionTiles, MAX_PLAN_TILES } from './planner.js';
 import { saveRegion, listRegions } from './ledger.js';
+import { buildIndex, indexRegion } from './tile-index.js';
 
 // Any URL starting with pmtiles:// is now handled by the PMTiles library.
 const protocol = new Protocol();
@@ -47,6 +48,7 @@ fetcher.onmessage = (event) => {
   const { status, done, total, message } = event.data;
   if (status === 'downloading') progressEl.textContent = `Downloading: ${done} of ${total} chunks`;
   if (status === 'complete') progressEl.textContent = `Downloaded: ${total} chunks saved.`;
+  if (status === 'complete') indexRegion(event.data.regionId);
   if (status === 'failed') progressEl.textContent = `Download failed. ${message}`;
   if (status === 'stopped') progressEl.textContent = `Download stopped at ${done} of ${total}. ${message}`;
   if (status === 'retrying') progressEl.textContent = `Connection problem at ${done} of ${total} chunks. Retrying…`;
@@ -66,6 +68,8 @@ async function resumeDownloads() {
 }
 resumeDownloads();
 window.addEventListener('online', resumeDownloads);
+
+buildIndex().then((count) => console.log(`Tile index: ${count} tiles saved on this device`));
 
 let currentPlan = null;
 let latestRequest = 0;

@@ -33,3 +33,10 @@ export async function deleteRegionFiles(regionId) {
     if (error.name !== 'NotFoundError') throw error;
   }
 }
+
+// Returns part of one chunk: `length` bytes, starting `start` bytes into its file.
+export async function readChunkSlice(regionId, index, start, length) {
+  const folder = await regionFolder(regionId, false);
+  const file = await folder.getFileHandle(`${index}.bin`);
+  return (await file.getFile()).slice(start, start + length).arrayBuffer();
+}
