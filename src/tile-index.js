@@ -6,6 +6,8 @@ import { readChunkSlice } from './store.js';
 const index = new Map();
 const keyFor = (z, x, y) => `${z}/${x}/${y}`;
 
+let building = Promise.resolve(); // the index build in progress, if there is one
+
 // Adds the tiles of one region's finished chunks to the index.
 export async function indexRegion(regionId) {
   const chunks = await chunksForRegion(regionId);
@@ -23,10 +25,13 @@ export async function indexRegion(regionId) {
 }
 
 // Rebuilds the whole index from the ledger. Returns how many tiles it holds.
-export async function buildIndex() {
-  index.clear();
-  for (const region of await listRegions()) await indexRegion(region.id);
-  return index.size;
+export function buildIndex() {
+  building = (async () => {
+    index.clear();
+    for (const region of await listRegions()) await indexRegion(region.id);
+    return index.size;
+  })();
+  return building;
 }
 
 export function hasLocalTile(z, x, y) {
@@ -44,8 +49,9 @@ function gunzip(buffer) {
   return new Response(unzipped).arrayBuffer();
 }
 
-// Returns one tile's bytes, ready for MapLibre, or null if it isn't saved here.
+// Returns one tile's bytes, ready for MapLibre, or null if it can't be read from this device.
 export async function readLocalTile(z, x, y) {
+  await building.catch(() => {}); // don't answer "not saved" while the index is still loading
   const where = index.get(keyFor(z, x, y));
   if (!where) return null;
 
@@ -57,6 +63,11 @@ export async function readLocalTile(z, x, y) {
     throw error;
   }
   if (stored.byteLength !== where.length) return null; // the file is shorter than it should be
+  if (!isGzip(stored)) return null; // not what was downloaded
 
-  return isGzip(stored) ? gunzip(stored) : stored;
+  try {
+    return await gunzip(stored); // gzip ends with a checksum, so damaged bytes fail here
+  } catch {
+    return null;
+  }
 }

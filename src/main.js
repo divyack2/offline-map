@@ -1,14 +1,15 @@
 import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Protocol } from 'pmtiles';
 import { layers, namedFlavor } from '@protomaps/basemaps';
 import { planRegion, countRegionTiles, MAX_PLAN_TILES } from './planner.js';
 import { saveRegion, listRegions } from './ledger.js';
 import { buildIndex, indexRegion } from './tile-index.js';
+import { makeTileLoader, tileStats } from './tile-loader.js';
 
-// Any URL starting with pmtiles:// is now handled by the PMTiles library.
-const protocol = new Protocol();
-maplibregl.addProtocol('pmtiles', protocol.tile);
+const ARCHIVE_URL = 'http://localhost:9000/nyc.pmtiles';
+
+maplibregl.addProtocol('offmap', makeTileLoader(ARCHIVE_URL));
+window.tileStats = tileStats; // so we can type tileStats in the console
 
 const map = new maplibregl.Map({
   container: 'map',
@@ -21,7 +22,9 @@ const map = new maplibregl.Map({
     sources: {
       protomaps: {
         type: 'vector',
-        url: 'pmtiles://http://localhost:9000/nyc.pmtiles',
+        tiles: ['offmap://{z}/{x}/{y}'],
+        minzoom: 0,
+        maxzoom: 15,
         attribution: '© OpenStreetMap',
       },
     },
@@ -31,7 +34,6 @@ const map = new maplibregl.Map({
 
 map.addControl(new maplibregl.NavigationControl());
 
-const ARCHIVE_URL = 'http://localhost:9000/nyc.pmtiles';
 const MAX_REGION_BYTES = 50_000_000; // placeholder; milestone 5 replaces it
 
 const statusEl = document.getElementById('status');
