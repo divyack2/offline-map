@@ -84,6 +84,7 @@ async function resumeDownloads() {
 }
 resumeDownloads();
 window.addEventListener('online', resumeDownloads);
+setInterval(resumeDownloads, 60_000); // a stopped download restarts within a minute
 
 buildIndex().then((count) => console.log(`Tile index: ${count} tiles saved on this device`));
 
