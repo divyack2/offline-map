@@ -5,11 +5,15 @@ import { planRegion, countRegionTiles, MAX_PLAN_TILES } from './planner.js';
 import { saveRegion, listRegions } from './ledger.js';
 import { buildIndex, indexRegion } from './tile-index.js';
 import { makeTileLoader, tileStats } from './tile-loader.js';
+import { makeAssetLoader, saveAssets, assetStats } from './asset-loader.js';
 
 const ARCHIVE_URL = 'http://localhost:9000/nyc.pmtiles';
+const ASSET_URL = 'https://protomaps.github.io/basemaps-assets/';
 
 maplibregl.addProtocol('offmap', makeTileLoader(ARCHIVE_URL));
 window.tileStats = tileStats; // so we can type tileStats in the console
+maplibregl.addProtocol('offmapasset', makeAssetLoader(ASSET_URL));
+window.assetStats = assetStats; // so we can type assetStats in the console
 
 const map = new maplibregl.Map({
   container: 'map',
@@ -17,8 +21,8 @@ const map = new maplibregl.Map({
   zoom: 11,
   style: {
     version: 8,
-    glyphs: 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf',
-    sprite: 'https://protomaps.github.io/basemaps-assets/sprites/v4/light',
+    glyphs: 'offmapasset://fonts/{fontstack}/{range}.pbf',
+    sprite: 'offmapasset://sprites/v4/light',
     sources: {
       protomaps: {
         type: 'vector',
@@ -31,6 +35,16 @@ const map = new maplibregl.Map({
     layers: layers('protomaps', namedFlavor('light'), { lang: 'en' }),
   },
 });
+
+// The fonts and icons the map needs wherever labels use the Latin alphabet.
+const FONTS = ['Noto Sans Regular', 'Noto Sans Medium', 'Noto Sans Italic'];
+const RANGES = ['0-255', '256-511', '8192-8447'];
+const COMMON_ASSETS = [
+  ...FONTS.flatMap((font) => RANGES.map((range) => `fonts/${font}/${range}.pbf`)),
+  'sprites/v4/light.json', 'sprites/v4/light.png', 'sprites/v4/light@2x.json', 'sprites/v4/light@2x.png',
+];
+// Save them once the map has finished its own first requests.
+map.once('idle', () => saveAssets(ASSET_URL, COMMON_ASSETS));
 
 map.addControl(new maplibregl.NavigationControl());
 
