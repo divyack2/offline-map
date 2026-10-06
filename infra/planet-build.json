@@ -1,0 +1,8 @@
+{
+  "build": "20261006",
+  "basemapVersion": "4.15.2",
+  "source": "https://build.protomaps.com/20261006.pmtiles",
+  "bytes": 138633934973,
+  "b3sum": "681837e0fc3c11fccf60847f63356daf6b996becdcd4e75ec09cc3a691f2acfa",
+  "destination": "s3://offmap-project-maps/planet/20261006.pmtiles"
+}

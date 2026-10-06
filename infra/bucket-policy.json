@@ -2,11 +2,14 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "PublicReadTiles",
+      "Sid": "PublicReadMapFiles",
       "Effect": "Allow",
       "Principal": "*",
       "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::offmap-project-maps/tiles/*"
+      "Resource": [
+        "arn:aws:s3:::offmap-project-maps/tiles/*",
+        "arn:aws:s3:::offmap-project-maps/planet/*"
+      ]
     }
   ]
 }
