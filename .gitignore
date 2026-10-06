@@ -16,3 +16,11 @@ npm-debug.log*
 
 # Build output
 dist/
+
+# Test output
+test/kill-test-*-offline.png
+test-results/
+playwright-report/
+
+# Map data (large; not checked in)
+data/nyc.pmtiles
