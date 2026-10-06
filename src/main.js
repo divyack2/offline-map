@@ -7,7 +7,7 @@ import { buildIndex, indexRegion } from './tile-index.js';
 import { makeTileLoader, tileStats } from './tile-loader.js';
 import { makeAssetLoader, saveAssets, assetStats } from './asset-loader.js';
 
-const ARCHIVE_URL = 'http://localhost:9000/nyc.pmtiles';
+const ARCHIVE_URL = import.meta.env.VITE_ARCHIVE_URL ?? 'http://localhost:9000/nyc.pmtiles';
 const ASSET_URL = 'https://protomaps.github.io/basemaps-assets/';
 
 maplibregl.addProtocol('offmap', makeTileLoader(ARCHIVE_URL));
