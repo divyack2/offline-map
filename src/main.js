@@ -7,7 +7,10 @@ import { buildIndex, indexRegion } from './tile-index.js';
 import { makeTileLoader, tileStats } from './tile-loader.js';
 import { makeAssetLoader, saveAssets, assetStats } from './asset-loader.js';
 
-const ARCHIVE_URL = import.meta.env.VITE_ARCHIVE_URL ?? 'http://localhost:9000/nyc.pmtiles';
+// The map file: the whole planet as one 139 GB PMTiles file in S3, read with range requests.
+// Set VITE_ARCHIVE_URL to read a different file, such as a small local extract while developing.
+const PLANET_URL = 'https://offmap-project-maps.s3.us-east-2.amazonaws.com/planet/20261006.pmtiles';
+const ARCHIVE_URL = import.meta.env.VITE_ARCHIVE_URL ?? PLANET_URL;
 const ASSET_URL = 'https://protomaps.github.io/basemaps-assets/';
 
 maplibregl.addProtocol('offmap', makeTileLoader(ARCHIVE_URL));
